@@ -1,4 +1,3 @@
-from re import X
 import socket
 import time
 import pickle
