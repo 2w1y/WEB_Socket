@@ -1,13 +1,14 @@
 import socket
 import time
 import pickle
-
+import threading
+import sys
 
 
 PORT = 5050
 FORMAT = 'utf-8'
 DISCONNECT_MESSAGE = "!DISCONNECT"
-SERVER = "192.168.56.1"
+SERVER = "192.168.0.165"
 ADDR = (SERVER, PORT)
 
 
@@ -28,10 +29,46 @@ Run = True
 #2 - Zarejestruj
 #Q - Wyjdź
 #""")
-while Run:
-    inp = input()
-    if inp == "Q": 
-        send({"acctiviti":DISCONNECT_MESSAGE})
-        Run = False
-    else:
-        send({"acctiviti":"PRINT","content":inp})
+#while Run:
+#    inp = input()
+#    if inp == "Q": 
+#        send({"acctiviti":DISCONNECT_MESSAGE})
+#        Run = False
+#    else:
+#        send({"acctiviti":"PRINT","content":inp})
+
+
+def leesen():
+    while True:
+        print(f"[{client.recv(2048).decode(FORMAT)}]")
+        if client.recv(2048).decode(FORMAT) == "!DISCONNECT":
+            break
+
+def welcom_menu():
+    x = input("Podaj 0 albo 1")
+    if x == "0":
+        send({"acctiviti":"TABLE_CREATE"})
+    if x == "1":
+        send({"acctiviti":"TABLE"})
+        print(f"[{client.recv(2048).decode(FORMAT)}] ")
+        thread = threading.Thread(target=leesen)
+        thread.start()
+        y = True
+        while y:
+            inp = input("Wysyyłanie wiadomości do innego uzytkownika: ")
+            if inp == "Q":
+                client.send(pickle.dumps({"acctiviti":DISCONNECT_MESSAGE}))
+                y = False
+                thread.stop()
+                sys.exit()
+            else:
+                client.send(pickle.dumps({"acctiviti":"MESSAGE","CONTENT":inp}))
+
+
+
+client.send(pickle.dumps({"acctiviti":"LOGIN","login":"test123","password":"Null"}))
+if client.recv(2048).decode(FORMAT) == "True":
+    print("zalogowano")
+    welcom_menu()
+else:
+    print("Nie udało się zalogować ")
