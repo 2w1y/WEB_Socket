@@ -40,17 +40,17 @@ Run = True
 
 def leesen():
     while True:
-        print(f"[{client.recv(2048).decode(FORMAT)}]")
-        if client.recv(2048).decode(FORMAT) == "!DISCONNECT":
+        get = client.recv(2048).decode(FORMAT)
+        if get == "!DISCONNECT":
             break
+        print(f"[{get}]")
+        print("Wysyyłanie wiadomości do innego uzytkownika: ")
 
 def welcom_menu():
-    x = input("Podaj 0 albo 1")
-    if x == "0":
-        send({"acctiviti":"TABLE_CREATE"})
+    x = input("Podaj 1:")
     if x == "1":
         send({"acctiviti":"TABLE"})
-        print(f"[{client.recv(2048).decode(FORMAT)}] ")
+        print(f"[{client.recv(2048).decode(FORMAT)}] ") #dodać ewentualny except od strony serwera jeśli coś wywali się na tym etapie
         thread = threading.Thread(target=leesen)
         thread.start()
         y = True

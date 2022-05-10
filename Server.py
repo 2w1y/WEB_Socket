@@ -40,10 +40,13 @@ class Table():
                 return  
     def join_and_play(self,user):
         self.user_2 = user
+        self.full = True
         self.user_2.conn.send("Table joined Succesfull".encode(FORMAT))
         print("[Table joined Succesfull Game Start]")
         self.user_1.conn.send("Gra zaczyna się właśnie teraz User1".encode(FORMAT))
         self.user_2.conn.send("Gra zaczyna się właśnie teraz User2".encode(FORMAT))
+        self.user_1.conn.send("Możesz wysłać statki".encode(FORMAT))
+        self.user_2.conn.send("Możesz wysłać statki".encode(FORMAT))
 
     def disconect(self,user):
         print("Disconected from table")
@@ -120,12 +123,12 @@ class Client():
             if recd["acctiviti"] == "TABLE":
                 for table in tables:
                     if tables[table] != 0:
-                        #Sprawdzać czy stół jest na pewno wolny
-                        tables[table].join_and_play(users[self.id])
-                        self.table = tables[table]
-                        connected = False
-                        print("breake", self.addr)
-                        break
+                        if tables[table].full == False:
+                            tables[table].join_and_play(users[self.id])
+                            self.table = tables[table]
+                            connected = False
+                            print("breake", self.addr)
+                            break
                     else:
                         tablee = Table(users[self.id])
                         tables[tablee.id] = tablee
@@ -140,17 +143,19 @@ class Client():
             msg = self.conn.recv(2048)
             recd = pickle.loads(msg)
             
-            
 
             if recd["acctiviti"] == "MESSAGE":
+                print(f"[Table id {self.table.id}] Message: " + recd['CONTENT'] ) #Message beetwen 2 users
                 if self.table.user_1.id == self.id:
+                    print("tu")
                     self.table.user_2.conn.send(recd["CONTENT"].encode(FORMAT))
                 else:
+                    print("tam")
                     self.table.user_1.conn.send(recd["CONTENT"].encode(FORMAT))
             if recd["acctiviti"] == "!DISCONNECT":
                 print("[]Użytkownik rozłączył sie podczas stołu")
                 self.table.disconect(users[self.id])
-                self.connect_game = False
+                self.connect_game = False ###Zamykanie instancji stołu
         print("[]Gra zakończona prawidłowo")
 
 def handle_client(conn, addr):
