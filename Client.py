@@ -51,18 +51,36 @@ def welcom_menu():
     if x == "1":
         send({"acctiviti":"TABLE"})
         print(f"[{client.recv(2048).decode(FORMAT)}] ") #dodać ewentualny except od strony serwera jeśli coś wywali się na tym etapie
-        thread = threading.Thread(target=leesen)
-        thread.start()
-        y = True
-        while y:
-            inp = input("Wysyyłanie wiadomości do innego uzytkownika: ")
-            if inp == "Q":
-                client.send(pickle.dumps({"acctiviti":DISCONNECT_MESSAGE}))
-                y = False
-                thread.stop()
-                sys.exit()
-            else:
-                client.send(pickle.dumps({"acctiviti":"MESSAGE","CONTENT":inp}))
+        inp = input("Time Breake")
+        send_boat(True,[3,3],3)
+        inp = input("Time Breake")
+        send_boat(True,[4,4],3)
+        inp = input("Time Breake")
+        send_boat(False,[6,6],3)
+        inp = input("Time Breake")
+        #thread = threading.Thread(target=leesen)
+        # #thread.start()
+        # y = True
+        # while y:
+        #     inp = input("Wysyyłanie wiadomości do innego uzytkownika: ")
+        #     if inp == "Q":
+        #         client.send(pickle.dumps({"acctiviti":DISCONNECT_MESSAGE}))
+        #         y = False
+        #         #thread.stop()
+        #         sys.exit()
+        #     else:
+        #        send_boat(True,[3,3],3) 
+        #        # client.send(pickle.dumps({"acctiviti":"MESSAGE","CONTENT":inp}))
+
+
+def send_boat(orient,pos_start,length):
+    client.send(pickle.dumps({"acctiviti":"STATKI","orient":orient,"pos_x":pos_start[0] ,"pos_y":pos_start[1],"length":length}))
+    get = client.recv(2048).decode(FORMAT)
+    if get == "!DISCONNECT":
+        pass
+        #break
+    print(f"[{get}]")
+
 
 
 
@@ -70,5 +88,6 @@ client.send(pickle.dumps({"acctiviti":"LOGIN","login":"test123","password":"Null
 if client.recv(2048).decode(FORMAT) == "True":
     print("zalogowano")
     welcom_menu()
+    
 else:
     print("Nie udało się zalogować ")
