@@ -5,7 +5,7 @@ from sqlite3 import connect
 import threading
 import pickle
 
-
+#Zrobić activiti register
 
 HEADER = 64
 PORT = 5050
@@ -61,7 +61,7 @@ class Table():
 
     def add_boat(self):
         pass
-    #Funkcja dodowania łudki do planszty przyjmuje orientacje i punkt zaczynający się statku i statek, Sprawdza czy dany statek może być w danym miejscu 
+    #Funkcja dodowania łudki do planszy przyjmuje orientacje i punkt zaczynający się statku i statek, Sprawdza czy dany statek może być w danym miejscu 
 
 class Client():
     def __init__(self,conn,addr):
