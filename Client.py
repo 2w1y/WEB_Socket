@@ -51,27 +51,23 @@ def welcom_menu():
     if x == "1":
         send({"acctiviti":"TABLE"})
         print(f"[{client.recv(2048).decode(FORMAT)}] ") #dodać ewentualny except od strony serwera jeśli coś wywali się na tym etapie
-        inp = input("Time Breake")
-        send_boat(True,[3,3],3)
-        inp = input("Time Breake")
-        send_boat(True,[4,4],3)
-        inp = input("Time Breake")
-        send_boat(False,[6,6],3)
-        inp = input("Time Breake")
-        #thread = threading.Thread(target=leesen)
-        # #thread.start()
-        # y = True
-        # while y:
-        #     inp = input("Wysyyłanie wiadomości do innego uzytkownika: ")
-        #     if inp == "Q":
-        #         client.send(pickle.dumps({"acctiviti":DISCONNECT_MESSAGE}))
-        #         y = False
-        #         #thread.stop()
-        #         sys.exit()
-        #     else:
-        #        send_boat(True,[3,3],3) 
-        #        # client.send(pickle.dumps({"acctiviti":"MESSAGE","CONTENT":inp}))
+        print(f"[{client.recv(2048).decode(FORMAT)}] ")
+        pozostalo = 100
+        #while pozostalo > 0
+        input("Time Breake")
+        print(send_boat(True,[0,1],1))
+        print(send_boat(False,[2,1],2))
+        print(send_boat(False,[4,1],3))
+        print(send_boat(False,[6,1],3))
+        input("Time Breake")
+        print(send_boat(False,[8,1],2))
+        print(send_boat(True,[2,5],4))
+        print(send_boat(False,[8,8],1))
+        print(send_boat(False,[0,9],1))
+        print(send_boat(False,[6,8],1))
+        input("Time Breake")
 
+#orient False dla pionowego   True dla poziomego
 
 def send_boat(orient,pos_start,length):
     client.send(pickle.dumps({"acctiviti":"STATKI","orient":orient,"pos_x":pos_start[0] ,"pos_y":pos_start[1],"length":length}))
@@ -79,9 +75,11 @@ def send_boat(orient,pos_start,length):
     if get == "!DISCONNECT":
         pass
         #break
-    print(f"[{get}]")
-
-
+    print(get)
+    if client.recv(2048).decode(FORMAT) == "Wszystkie statki rozstawione":
+        return "to już jest koniec"
+    else:
+        return "Robota czeka"
 
 
 client.send(pickle.dumps({"acctiviti":"LOGIN","login":"test123","password":"Null"}))

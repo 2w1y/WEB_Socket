@@ -5,6 +5,7 @@ from sqlite3 import connect
 import threading
 import pickle
 
+import time
 #from WEB_Socket.main import add_boat
 
 #Zrobić activiti register
@@ -47,7 +48,7 @@ class Table():
         print("[Table joined Succesfull Game Start]")
         self.user_1.conn.send("Gra zaczyna się właśnie teraz User1".encode(FORMAT))
         self.user_2.conn.send("Gra zaczyna się właśnie teraz User2".encode(FORMAT))
-    
+        time.sleep(0.1)
         self.user_1.conn.send("Możesz wysłać statki".encode(FORMAT))
         self.user_2.conn.send("Możesz wysłać statki".encode(FORMAT))
         
@@ -63,6 +64,8 @@ class Table():
         for i in range(10):
            self.user_2.plansza.append([0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
          
+
+    
 
 
     def disconect(self,user):
@@ -158,7 +161,7 @@ class Client():
     
     
     def game(self):
-        def add_boat(orient,pos_start,length):
+        def add_boat(orient,pos_start,length): #orient False dla pionowego   True dla poziomego
             zapis_plansza = []
             for i in range(10):
                 zapis_plansza.append([0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
@@ -256,14 +259,20 @@ class Client():
                     print("tam")
                     self.table.user_1.conn.send(recd["CONTENT"].encode(FORMAT))
             if  recd["acctiviti"] == "STATKI":
-                print("Przyjęto statek")
-                print(self.statki,self.plansza)
+                print("Przyjęto statek: ")
+                
                 print(recd["orient"],[recd["pos_x"],recd["pos_y"]],recd["length"])
                 self.plansza = add_boat(recd["orient"],[recd["pos_x"],recd["pos_y"]],recd["length"])
+                print(self.statki)
                 for i in range(10):
                     print(self.plansza[i])
-                
                 self.conn.send("Dodano".encode(FORMAT))
+                
+                if len(self.statki) == 0:
+                    self.conn.send("Wszystkie statki rozstawione".encode(FORMAT))
+                else:
+                    self.conn.send(str(len(self.statki)).encode(FORMAT))
+
 
             if recd["acctiviti"] == "!DISCONNECT":
                 print("[]Użytkownik rozłączył sie podczas stołu")
